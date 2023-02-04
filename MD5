@@ -1,4 +1,4 @@
-4db35a1948164e3199a7a121cfa33681 *DESCRIPTION
+a5f8508b1f599897f76fb028f7d277e5 *DESCRIPTION
 74759c858536c98f5c1c3d25dcfa6383 *LICENSE
 f21d5dfb909835d7ea5c38d00f935eac *NAMESPACE
 04eafd0256fa0c7c9e65d8bcb30c5d69 *NEWS.md
@@ -66,6 +66,7 @@ b858d0d8aaab53bc172c27e0d411d869 *man/vd_thin_draw.Rd
 d4e8865d49f9f2705193afd049f6380f *src/Makevars
 8eebb5cbea1241454d2119970931275b *src/Makevars.win
 e0af9492df28b6908bb5a1bcb9be8727 *src/RcppExports.cpp
-f5accbb714c16b52463183bfefcb9466 *src/echoice2.cpp
+c637281ef1bbeedadf84688b2e6c1722 *src/echoice2.cpp
+c07590f72cb1f2c2debcbfd810761115 *src/myomp.h
 0bcb695efa11789ef6feeceee4b50359 *tests/testthat.R
 39c8ad1d26fc7f9d79b630a1b0eb6929 *tests/testthat/test-echoice2.R
