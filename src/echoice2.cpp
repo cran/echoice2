@@ -19,7 +19,7 @@ time_t itime2;
 
 void startTimer() {
   itime2 = time(NULL);
-  Rcout << " Computation in progress \n";
+  // Rcout << " Computation in progress \n";
   //REprintf("Computation in progress \n");
 }
 
@@ -36,9 +36,10 @@ void infoTimer(int rep, int R) {
   int perc = floor(perc1*100+0.5);
   
   //overwrite output with current status
-  REprintf("\r");
-  REprintf("Computing (%i percent), ETA: %.2f min.", perc, timetoend);
-  
+  if(timetoend>0.5){
+    REprintf("\r");
+    REprintf("Computing (%i percent), ETA: %.2f min.", perc, timetoend);
+  }
 }
 
 
@@ -1541,7 +1542,7 @@ void draw_dd_taupr( vec& ll_olds,
 
    vec maxpaids(N);
    for(int n=0; n<N; n++){
-     maxpaids(n) = max(sign(XX(span(xfr(n),xto(n)))%PP(span(xfr(n),xto(n)))));
+     maxpaids(n) = max(sign(XX(span(xfr(n),xto(n))))%PP(span(xfr(n),xto(n))));
    }
 
    //no covariates (Z) for now
