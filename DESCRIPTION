@@ -1,8 +1,8 @@
 Type: Package
 Package: echoice2
 Title: Choice Models with Economic Foundation
-Version: 0.2.3
-Date: 2023-03-11
+Version: 0.2.4
+Date: 2023-11-20
 Authors@R: 
     person(given = "Nino",
            family = "Hardt",
@@ -25,7 +25,7 @@ Encoding: UTF-8
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2023-03-12 17:40:43 UTC; myself
+Packaged: 2023-11-20 08:34:37 UTC; myself
 Author: Nino Hardt [aut, cre] (<https://orcid.org/0000-0001-5215-6216>)
 Repository: CRAN
-Date/Publication: 2023-03-12 18:10:02 UTC
+Date/Publication: 2023-11-20 08:50:07 UTC
