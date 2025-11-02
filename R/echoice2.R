@@ -109,15 +109,6 @@ NULL
 
 
 
-#' @importFrom stringr str_subset
-NULL
-
-#' @importFrom stringr str_remove
-NULL
-
-#' @importFrom stringr str_extract
-NULL
-
 #' @importFrom forcats fct_relabel
 NULL
 
@@ -352,7 +343,7 @@ dummyvar<-function(data){
                         data=data, 
                         na.action = "na.pass") 
   attributes(out)[c("assign", "contrasts")]=NULL
-  return(as_tibble(out))
+  return(as_tibble(out, .name_repair = "unique"))
 }
 
 
@@ -368,7 +359,7 @@ dummyvar<-function(data){
 #'
 #' @export
 dummify=function(dat, sel){
-  dat=as_tibble(dat)
+  dat=as_tibble(dat, .name_repair = "unique")
   for(i in seq_along(sel)){
     selv=sel[i]
     dummidata <- dat %>% select(all_of(selv)) %>% dummyvar()
@@ -397,9 +388,10 @@ get_attr_lvl=function(tdc){
   tdc %>%
     select(-any_of(c('id','task','alt','p','x')))%>% 
     names %>% tibble::enframe() %>% 
-      mutate(attribute=stringr::str_extract(.$value,"^.*?(?=\\:)")) %>%
-      mutate(lvl=stringr::str_remove(.$value, .$attribute)) %>%
-      mutate(lvl=stringr::str_remove(.$lvl,"^(:)")) %>%
+      mutate(
+        attribute = ifelse(grepl(":", value), sub(":.*$", "", value), NA_character_),
+        lvl = ifelse(grepl(":", value), sub("^[^:]*:", "", value), NA_character_)
+      ) %>%
       group_by(across("attribute")) %>%
       mutate(reference_lvl=dplyr::first(lvl)) %>%
       mutate(reference=ifelse(lvl==reference_lvl,1,0))%>%
@@ -721,7 +713,7 @@ ec_summarize_attrlvls<-function(data_in){
       map(table) %>% 
       map(names) %>% 
       map(paste,collapse=', ') %>% 
-      as_tibble() %>% 
+      as_tibble(.name_repair = "unique") %>% 
       pivot_longer(everything()) %>% rlang::set_names(c('attribute','levels')) )
 }
 #' @rdname ec_summarize_attrlvls
@@ -1791,11 +1783,11 @@ vd_dem_vdm=function(vd,
   
   attributes(out)=NULL
   #add draws to data tibble
-  vd=as_tibble(vd)
+  vd=as_tibble(vd, .name_repair = "unique")
   vd$.demdraws<-map(out,drop)  
   
   #add attributes
-  attributes(vd)$attr_names <- vd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% str_subset('^\\.', negate = TRUE)
+  attributes(vd)$attr_names <- vd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% grep('^\\.', ., value = TRUE, invert = TRUE)
   # attributes(vd)$ec_model   <- attributes(est)$ec_model
   attributes(vd)$model <- list(ec_type=est$ec_type,
                                ec_type_short=est$ec_type_short,
@@ -1994,13 +1986,13 @@ vd_dem_vdm_screen=function(vd,
   
   attributes(out)=NULL
   #add draws to data tibble
-  vd=as_tibble(vd)
+  vd=as_tibble(vd, .name_repair = "unique")
   vd$.demdraws<-map(out,drop)   
   
   #add attributes
   attributes(vd)$attr_names <- 
     vd %>% colnames %>% setdiff(c("id","task","alt","x","p")) %>% 
-      str_subset('^\\.', negate = TRUE)
+      grep('^\\.', ., value = TRUE, invert = TRUE)
 
   attributes(vd)$model <- list(ec_type=est$ec_type,
                                ec_type_short=est$ec_type_short,
@@ -2129,11 +2121,11 @@ vd_dem_vdm_ss=function(vd,
 
   attributes(out)=NULL
   #add draws to data tibble
-  vd=as_tibble(vd)
+  vd=as_tibble(vd, .name_repair = "unique")
   vd$.demdraws<-map(out,drop)  
   
   #add attributes
-  attributes(vd)$attr_names <- vd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% str_subset('^\\.', negate = TRUE)
+  attributes(vd)$attr_names <- vd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% grep('^\\.', ., value = TRUE, invert = TRUE)
   attributes(vd)$model <- list(ec_type=est$ec_type,
                                ec_type_short=est$ec_type_short,
                                error_specification=est$error_specification)
@@ -2627,11 +2619,11 @@ dd_dem=function(dd,
   
   attributes(out)=NULL
   #add draws to data tibble
-  dd=as_tibble(dd)
+  dd=as_tibble(dd, .name_repair = "unique")
   dd$.demdraws<-map(out,drop)  
   
   #add attributes
-  attributes(dd)$attr_names <- dd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% str_subset('^\\.', negate = TRUE)
+  attributes(dd)$attr_names <- dd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% grep('^\\.', ., value = TRUE, invert = TRUE)
   # attributes(dd)$ec_model   <- attributes(est)$ec_model
   attributes(dd)$model <- list(ec_type=est$ec_type,
                                ec_type_short=est$ec_type_short,
@@ -2764,11 +2756,11 @@ dd_dem_sr=function(dd,
   
   attributes(out)=NULL
   #add draws to data tibble
-  dd=as_tibble(dd)
+  dd=as_tibble(dd, .name_repair = "unique")
   dd$.demdraws<-map(out,drop)  
   
   #add attributes
-  attributes(dd)$attr_names <- dd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% str_subset('^\\.', negate = TRUE)
+  attributes(dd)$attr_names <- dd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% grep('^\\.', ., value = TRUE, invert = TRUE)
   # attributes(dd)$ec_model   <- attributes(est)$ec_model
   attributes(dd)$model <- list(ec_type=est$ec_type,
                                ec_type_short=est$ec_type_short,
@@ -3033,7 +3025,7 @@ vd_dem_summarize <- vd_dem_summarise
 ec_dem_eval = function(de){
   `%!in%` = Negate(`%in%`)
   
-  is_this_discrete=attributes(de)$model$ec_type %>% stringr::str_detect('discrete')
+  is_this_discrete=grepl('discrete', attributes(de)$model$ec_type)
   
   if(is_this_discrete){
     out <- de %>%
@@ -3445,7 +3437,7 @@ ec_screenprob_sr=function(xd,
   
   #screening model type "olumetric-conjunctive" or "volumetric-conjunctive-pr"
   screening_model_type <- est$ec_type
-  with_price_screening <- stringr::str_detect(screening_model_type, "-pr")
+  with_price_screening <- grepl("-pr", screening_model_type)
   
   #cores  
   if(is.null(cores)){
@@ -3499,11 +3491,11 @@ ec_screenprob_sr=function(xd,
   attributes(out)=NULL
   
   #add draws to data tibble
-  xd=as_tibble(xd)
+  xd=as_tibble(xd, .name_repair = "unique")
   xd$.screendraws<-map(out,drop)
   
   #add attributes
-  attributes(xd)$attr_names <- xd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% str_subset('^\\.', negate = TRUE)
+  attributes(xd)$attr_names <- xd %>% colnames %>% setdiff(c("id","task","alt","x","p" )) %>% grep('^\\.', ., value = TRUE, invert = TRUE)
   attributes(xd)$ec_model   <- attributes(est)$ec_model
   
   return(xd)
@@ -3531,7 +3523,7 @@ ec_screenprob_sr=function(xd,
 #' @export
 ec_draws_MU <- function(draws){
   
-  draws$MUDraw %>% as_tibble %>%
+  draws$MUDraw %>% as_tibble(.name_repair = ~make.names(seq_along(.), unique = TRUE)) %>%
     rlang::set_names(draws$parnames) %>% 
     rowid_to_column(var = 'draw') %>%
     pivot_longer(cols = -any_of('draw'), 
@@ -3557,7 +3549,7 @@ ec_draws_MU <- function(draws){
 #' @export
 ec_draws_screen <- function(draws){
   
-  draws$deltaDraw %>% as_tibble %>%
+  draws$deltaDraw %>% as_tibble(.name_repair = ~make.names(seq_along(.), unique = TRUE)) %>%
     rlang::set_names(colnames(attributes(draws)$Af)) %>% 
     rowid_to_column(var = 'draw') %>%
     pivot_longer(cols = -any_of('draw'), 
@@ -3671,7 +3663,7 @@ ec_boxplot_MU <- function(draws, burnin=100){
               y = attributes(draws)$ec_data$attributes %>%
                 dplyr::select(all_of(c('attr_level','attribute','lvl','reference_lvl'))), 
               by=c("par"="attr_level")) %>%
-    mutate(par=stringr::str_replace_all(par,paste0(.$attribute,":"),"")) %>%
+    mutate(par=gsub(paste0(attribute, ':'), '', par)) %>%
     select(all_of(c('draw','par','value','attribute'))) %>%
     dplyr::filter(.$draw>burnin) %>%
     ggplot2::ggplot(aes(x=par,y=value)) + geom_boxplot() + coord_flip() +
@@ -3890,7 +3882,7 @@ ec_lol_tidy1 <- function(data_lol, X="X", y="y"){
   combined_design_matrices %>%
     add_column(combined_responses) %>% 
     relocate(c(task,alt),.after=id) %>%
-    as.data.frame() %>% as_tibble() %>% return()
+    as.data.frame() %>% as_tibble(.name_repair = "unique") %>% return()
 }
 
 
@@ -3926,7 +3918,7 @@ ec_util_dummy_mutualeclusive= function(data_in, filtered=TRUE){
   dat<-data_in %>% select(-any_of(c("id","task","alt","x")))
   
   combs       <- t(utils::combn(seq_len(ncol(dat)),2))
-  combs_name  <- t(utils::combn(colnames(dat),2)) %>% as_tibble()
+  combs_name  <- t(utils::combn(colnames(dat),2)) %>% as_tibble(.name_repair = "unique")
   
   m_ex=rep(NA,nrow(combs))
   for(kk in seq_len(nrow(combs))){
